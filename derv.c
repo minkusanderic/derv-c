@@ -159,14 +159,3 @@ bool match(union expr* e, const char* str)
     }
   return isNullable(e);
 }
-
-int main(void)
-{
-
-  union expr *test = seq(word("Hello"),
-			 word("World"));
-  char result[1000];
-  expr_to_string(test, result);
-  printf("%s\n", result);
-  printf("%d\n", match(test, "a"));
-}
