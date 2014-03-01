@@ -16,10 +16,17 @@ int main(void)
 {
   int tests_failed = 0;
   int total_tests = 0;
+
+  ASSERT_MATCH( epsilon(), "")
+  
   ASSERT_MATCH( prim('a'), "a");
   ASSERT_NOT_MATCH( prim('a'), "ab");
   ASSERT_NOT_MATCH( prim('a'), "");
   ASSERT_NOT_MATCH( prim('a'), "aaaa");
+
+  ASSERT_MATCH( or(prim('a'), prim('b')), "a");
+  ASSERT_MATCH( or(prim('a'), prim('b')), "b");
+  ASSERT_NOT_MATCH( or(prim('a'), prim('b')), "");
 
   printf("%d of %d tests passed\n", total_tests - tests_failed, total_tests);
   

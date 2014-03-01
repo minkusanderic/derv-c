@@ -24,6 +24,15 @@ union expr* and(union expr* this, union expr* that)
   return ret;
 }
 
+union expr* or(union expr* this, union expr* that)
+{
+  union expr *ret = (union expr*)malloc(sizeof(union expr));
+  ret->tag = CHOICE;
+  ret->choice.this = this;
+  ret->choice.that = that;
+  return ret;
+}
+
 
 union expr* seq(union expr* this, union expr* rest)
 {
@@ -69,7 +78,12 @@ void expr_to_string(union expr *e, char * ret)
     case INTERSECTION:
       expr_to_string(e->intersection.this, this_str);
       expr_to_string(e->intersection.that, that_str);
-      sprintf(ret, "inter(%s, %s)", this_str, that_str);
+      sprintf(ret, "and(%s, %s)", this_str, that_str);
+      break;
+   case CHOICE:
+      expr_to_string(e->intersection.this, this_str);
+      expr_to_string(e->intersection.that, that_str);
+      sprintf(ret, "or(%s, %s)", this_str, that_str);
       break;
     case SEQUENCE:
       expr_to_string(e->sequence.this, this_str);
@@ -96,6 +110,9 @@ union expr* derive(union expr* e, char c)
     case INTERSECTION:
       return and(derive(e->intersection.this, c),
 		 derive(e->intersection.that, c));
+    case CHOICE:
+      return or(derive(e->intersection.this, c),
+		derive(e->intersection.that, c));
     case SEQUENCE:
       return and(derive(e->sequence.this, c),
 		 e->sequence.rest);
@@ -118,6 +135,8 @@ bool isNullable(union expr* e)
       return isNullable(e->intersection.this) && isNullable(e->intersection.that);
     case INTERSECTION:
       return isNullable(e->intersection.this) && isNullable(e->intersection.that);
+    case CHOICE:
+      return isNullable(e->intersection.this) || isNullable(e->intersection.that);
     default:
       break;
     }
