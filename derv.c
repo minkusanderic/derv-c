@@ -1,32 +1,32 @@
 #include "derv.h"
 
-union expr* empty()
+Regex empty()
 {
-  union expr *ret = (union expr*)malloc(sizeof(union expr));
+  Regex ret = (Regex)malloc(sizeof(union expr));
   ret->tag = EMPTY;
   return ret;
 }
 
-union expr* epsilon()
+Regex epsilon()
 {
-  union expr *ret = (union expr*)malloc(sizeof(union expr));
+  Regex ret = (Regex)malloc(sizeof(union expr));
   ret->tag = EPSILON;
   return ret;
 
 }
 
-union expr* and(union expr* this, union expr* that)
+Regex and(Regex this, Regex that)
 {
-  union expr *ret = (union expr*)malloc(sizeof(union expr));
+  Regex ret = (Regex)malloc(sizeof(union expr));
   ret->tag = INTERSECTION;
   ret->intersection.this = this;
   ret->intersection.that = that;
   return ret;
 }
 
-union expr* or(union expr* this, union expr* that)
+Regex or(Regex this, Regex that)
 {
-  union expr *ret = (union expr*)malloc(sizeof(union expr));
+  Regex ret = (Regex)malloc(sizeof(union expr));
   ret->tag = CHOICE;
   ret->choice.this = this;
   ret->choice.that = that;
@@ -34,24 +34,24 @@ union expr* or(union expr* this, union expr* that)
 }
 
 
-union expr* seq(union expr* this, union expr* rest)
+Regex seq(Regex this, Regex rest)
 {
-  union expr *ret = (union expr*)malloc(sizeof(union expr));
+  Regex ret = (Regex)malloc(sizeof(union expr));
   ret->tag = SEQUENCE;
   ret->sequence.this = this;
   ret->sequence.rest = rest;
   return ret;
 }
 
-union expr* prim(char a)
+Regex prim(char a)
 {
-  union expr *ret = (union expr*)malloc(sizeof(union expr));
+  Regex ret = (Regex)malloc(sizeof(union expr));
   ret->tag = PRIM;
   ret->prim.a = a;
   return ret;
 }
 
-union expr* word(const char * str)
+Regex word(const char * str)
 {
   int length = strlen(str);
 
@@ -65,7 +65,7 @@ union expr* word(const char * str)
     }
 }
 
-void expr_to_string(union expr *e, char * ret)
+void expr_to_string(Regex e, char * ret)
 {
   char this_str[1000];
   char that_str[1000];
@@ -96,7 +96,7 @@ void expr_to_string(union expr *e, char * ret)
     }
 }
 
-union expr* derive(union expr* e, char c)
+Regex derive(Regex e, char c)
 {
   switch(e->tag)
     {
@@ -121,7 +121,7 @@ union expr* derive(union expr* e, char c)
     }
 }
 
-bool isNullable(union expr* e)
+bool isNullable(Regex e)
 {
   switch(e->tag)
     {
@@ -142,7 +142,7 @@ bool isNullable(union expr* e)
     }
 }
 
-bool match(union expr* e, const char* str)
+bool match(Regex e, const char* str)
 {
   while(strlen(str) > 0)
     {
