@@ -1,31 +1,4 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-
-#include <stdbool.h>
-
-typedef enum {EMPTY, EPSILON, PRIM, INTERSECTION, SEQUENCE} tag_id;
-
-union expr {
-  tag_id tag;
-
-  struct {
-    tag_id tag;
-    char a;
-  } prim;
-
-  struct {
-    tag_id tag;
-    union expr *this;
-    union expr *that;
-  } intersection;
-  
-  struct {
-    tag_id tag;
-    union expr *this;
-    union expr *rest;
-  } sequence;
-} expr;
+#include "derv.h"
 
 union expr* empty()
 {
