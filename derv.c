@@ -96,31 +96,6 @@ void expr_to_string(Regex e, char * ret)
     }
 }
 
-Regex derive(Regex e, char c)
-{
-  switch(e->tag)
-    {
-    case EMPTY:
-      return empty();
-    case EPSILON:
-      return empty();
-    case PRIM:
-      if(e->prim.a == c) { return epsilon(); }
-      else { return empty(); }
-    case INTERSECTION:
-      return and(derive(e->intersection.this, c),
-		 derive(e->intersection.that, c));
-    case CHOICE:
-      return or(derive(e->intersection.this, c),
-		derive(e->intersection.that, c));
-    case SEQUENCE:
-      return and(derive(e->sequence.this, c),
-		 e->sequence.rest);
-    default:
-      break;
-    }
-}
-
 bool isNullable(Regex e)
 {
   switch(e->tag)
@@ -141,6 +116,38 @@ bool isNullable(Regex e)
       break;
     }
 }
+
+Regex derive(Regex e, char c)
+{
+  switch(e->tag)
+    {
+    case EMPTY:
+      return empty();
+    case EPSILON:
+      return empty();
+    case PRIM:
+      if(e->prim.a == c) { return epsilon(); }
+      else { return empty(); }
+    case INTERSECTION:
+      return and(derive(e->intersection.this, c),
+		 derive(e->intersection.that, c));
+    case CHOICE:
+      return or(derive(e->intersection.this, c),
+		derive(e->intersection.that, c));
+    case SEQUENCE:
+      if(isNullable(e->sequence.this))
+	{
+	  return or(seq(derive(e->sequence.this, c), e->sequence.rest), derive(e->sequence.rest, c));
+	}
+      else
+	{
+	  return seq(derive(e->sequence.this, c), e->sequence.rest);
+	}
+    default:
+      break;
+    }
+}
+
 
 bool match(Regex e, const char* str)
 {

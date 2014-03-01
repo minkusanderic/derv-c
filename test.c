@@ -17,6 +17,9 @@ int main(void)
   int tests_failed = 0;
   int total_tests = 0;
 
+  Regex a = prim('a');
+  Regex b = prim('b');
+
   ASSERT_MATCH( epsilon(), "")
   
   ASSERT_MATCH( prim('a'), "a");
@@ -27,6 +30,20 @@ int main(void)
   ASSERT_MATCH( or(prim('a'), prim('b')), "a");
   ASSERT_MATCH( or(prim('a'), prim('b')), "b");
   ASSERT_NOT_MATCH( or(prim('a'), prim('b')), "");
+
+  ASSERT_NOT_MATCH( and(prim('a'), prim('b')), "a");
+  ASSERT_NOT_MATCH( and(prim('a'), prim('b')), "b");
+  ASSERT_NOT_MATCH( and(prim('a'), prim('b')), "");
+
+  ASSERT_MATCH( and(or(a, b), or(a, b)), "a");
+  ASSERT_MATCH( and(or(a, b), or(a, b)), "b");
+
+  ASSERT_MATCH( seq(a, b), "ab");
+  ASSERT_MATCH( seq(a, seq(a, b)), "aab");
+  ASSERT_NOT_MATCH( seq(a, b), "aa");
+
+  ASSERT_MATCH( word("Hello"), "Hello");
+  ASSERT_MATCH( seq(word("Hello"), word("World")), "HelloWorld");
 
   printf("%d of %d tests passed\n", total_tests - tests_failed, total_tests);
   
